@@ -2,6 +2,7 @@ package com.example.community.controller;
 
 import com.example.community.annotation.LoginRequired;
 import com.example.community.entity.User;
+import com.example.community.service.LikeService;
 import com.example.community.service.UserService;
 import com.example.community.util.CommunityUtil;
 import com.example.community.util.HostHolder;
@@ -44,12 +45,17 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private LikeService likeService;
+
+    // 个人设置
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage() {
         return "/site/setting";
     }
 
+    // 上传文件
     @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
@@ -82,6 +88,7 @@ public class UserController {
         return "redirect:/index";
     }
 
+    // 获取用户头像
     @RequestMapping(path = "/header/{fileName}", method = RequestMethod.GET)
     public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response) {
         // 服务器存放路径
@@ -106,6 +113,7 @@ public class UserController {
         }
     }
 
+    // 修改密码
     @RequestMapping(path = "/modify", method = RequestMethod.POST)
     public String modifyPassword(String password, String newPassword, Model model) {
         // 检查原密码是否正确
@@ -119,5 +127,20 @@ public class UserController {
         // 正确则修改并重定向到重新登录
         userService.updatePassword(user.getId(), CommunityUtil.md5(newPassword + salt));
         return "redirect:/logout";
+    }
+
+    // 个人主页
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model){
+        User user = userService.findUserById(userId);
+        if (user == null){
+            throw new RuntimeException("该用户不存在");
+        }
+        model.addAttribute("user", user);
+
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+        return "/site/profile";
     }
 }
