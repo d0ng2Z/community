@@ -227,7 +227,7 @@ public class MessageController implements CommunityConstant {
 
     // 查询某类通知的全部数据
     @RequestMapping(path = "/notice/detail/{topic}", method = RequestMethod.GET)
-    public String getNoticeDetail(@PathVariable("topic") String topic, Page page, Model model){
+    public String getNoticeDetail(@PathVariable("topic") String topic, Page page, Model model) {
         User user = hostHolder.getUser();
 
         page.setLimit(5);
@@ -236,8 +236,8 @@ public class MessageController implements CommunityConstant {
 
         List<Message> noticeList = messageService.findNotices(user.getId(), topic, page.getOffset(), page.getLimit());
         List<Map<String, Object>> noticeVoList = new ArrayList<>();
-        if (noticeList != null){
-            for (Message notice : noticeList){
+        if (noticeList != null) {
+            for (Message notice : noticeList) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("notice", notice);
                 String content = HtmlUtils.htmlUnescape(notice.getContent());
@@ -255,7 +255,7 @@ public class MessageController implements CommunityConstant {
 
         // 设置已读
         List<Integer> ids = getLetterIds(noticeList);
-        if (!ids.isEmpty()){
+        if (!ids.isEmpty()) {
             messageService.readMessage(ids);
         }
         return "/site/notice-detail";
