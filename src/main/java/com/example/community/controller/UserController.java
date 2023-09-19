@@ -134,7 +134,12 @@ public class UserController implements CommunityConstant {
         return "redirect:/logout";
     }
 
-    // 个人主页
+    /**
+     * 个人主页
+     * @param userId
+     * @param model
+     * @return
+     */
     @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
     public String getProfilePage(@PathVariable("userId") int userId, Model model){
         User user = userService.findUserById(userId);

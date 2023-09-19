@@ -8,7 +8,7 @@ import com.example.community.entity.DiscussPost;
 import com.example.community.entity.LoginTicket;
 import com.example.community.entity.Message;
 import com.example.community.entity.User;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
