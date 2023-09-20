@@ -1,5 +1,6 @@
 package com.example.community.config;
 
+import com.example.community.controller.intercepter.DataInterceptor;
 import com.example.community.controller.intercepter.LoginTicketInterceptor;
 import com.example.community.controller.intercepter.MessageInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private LoginTicketInterceptor loginTicketInterceptor;
 
+    @Autowired
+    private DataInterceptor dataInterceptor;
+
 //    @Autowired
 //    private LoginRequiredInterceptor loginRequiredInterceptor;
 
@@ -24,10 +28,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 拦截器按注册顺序执行
         registry.addInterceptor(loginTicketInterceptor)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
 //        registry.addInterceptor(loginRequiredInterceptor)
 //                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
         registry.addInterceptor(messageInterceptor)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
+        registry.addInterceptor(dataInterceptor)
+                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
+
     }
 
 

@@ -53,7 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                         AUTHORITY_MODERATOR,
                         AUTHORITY_ADMIN
                 )
-                .antMatchers("/discuss/delete")
+                .antMatchers("/discuss/delete",
+                        "/data/**"
+                        )
                 .hasAnyAuthority(
                         AUTHORITY_ADMIN
                 )
