@@ -40,6 +40,14 @@ public class ShareController implements CommunityConstant {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    @Value("${qiniu.buket.share.url}")
+    private String shareBucketUrl;
+
+    /**
+     *生成长图
+     * @param htmlUrl
+     * @return
+     */
     @RequestMapping(path = "/share", method = RequestMethod.GET)
     @ResponseBody
     public String share(String htmlUrl){
@@ -56,13 +64,13 @@ public class ShareController implements CommunityConstant {
 
         // 返回访问路径
         Map<String, Object> map = new HashMap<>();
-        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
-
+//        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
+        map.put("shareUrl",  shareBucketUrl + "/" + fileName);
         return CommunityUtil.getJSONString(0, null, map);
     }
 
     /**
-     * 获取长图
+     * 获取长图 废弃
      */
     @RequestMapping(path = "/share/image/{fileName}", method = RequestMethod.GET)
     public void getShareImage(@PathVariable("fileName") String fileName, HttpServletResponse response){
