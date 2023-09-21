@@ -1,10 +1,11 @@
 package com.example.community.controller;
 
 import com.example.community.annotation.LoginRequired;
+import com.example.community.entity.Comment;
+import com.example.community.entity.DiscussPost;
+import com.example.community.entity.Page;
 import com.example.community.entity.User;
-import com.example.community.service.FollowService;
-import com.example.community.service.LikeService;
-import com.example.community.service.UserService;
+import com.example.community.service.*;
 import com.example.community.util.CommunityConstant;
 import com.example.community.util.CommunityUtil;
 import com.example.community.util.HostHolder;
@@ -28,6 +29,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -51,10 +56,15 @@ public class UserController implements CommunityConstant {
     private HostHolder hostHolder;
 
     @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
     private LikeService likeService;
 
     @Autowired
     private FollowService followService;
+    @Autowired
+    private CommentService commentService;
 
     @Value("${qiniu.key.access}")
     private String accessKey;
@@ -216,5 +226,69 @@ public class UserController implements CommunityConstant {
         model.addAttribute("hasFollowed", hasFollowed);
 
         return "/site/profile";
+    }
+
+    /**
+     * 查询用户的发帖
+     */
+    @RequestMapping(path = "/profile/mypost/{userId}", method = RequestMethod.GET)
+    public String getMyPost(@PathVariable("userId") int userId, Model model, Page page){
+        User user = userService.findUserById(userId);
+        if (user == null){
+            throw new RuntimeException("用户不存在");
+        }
+        model.addAttribute("user", user);
+
+        int rows = discussPostService.findDiscussPostRows(userId);
+        page.setLimit(5);
+        page.setPath("/user/profile/mypost/" + userId);
+        page.setRows(rows);
+        model.addAttribute("rows", rows);
+
+        List<DiscussPost> list = discussPostService.findDiscussPosts(userId, 0, page.getLimit(), 0);
+        List<Map<String, Object>> discussPosts = new ArrayList<>();
+        if (list != null){
+            for (DiscussPost discussPost : list){
+                Map<String, Object> map = new HashMap<>();
+                map.put("post", discussPost);
+                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, discussPost.getId());
+                map.put("likeCount", likeCount);
+                discussPosts.add(map);
+            }
+        }
+        model.addAttribute("discussPosts", discussPosts);
+        return "/site/my-post";
+    }
+
+    /**
+     * 查询用户的回复
+     */
+    @RequestMapping(path = "/profile/myreply/{userId}", method = RequestMethod.GET)
+    public String getMyReply(@PathVariable("userId") int userId, Model model, Page page){
+        User user = userService.findUserById(userId);
+        if (user == null){
+            throw new RuntimeException("用户不存在");
+        }
+        model.addAttribute("user", user);
+
+        int rows = commentService.findCommentCountByUserId(userId);
+        page.setLimit(5);
+        page.setPath("/user/profile/myreply/" + userId);
+        page.setRows(rows);
+        model.addAttribute("rows", rows);
+
+        List<Comment> list = commentService.findCommentsByUserId(userId, 0, page.getLimit());
+        List<Map<String, Object>> comments = new ArrayList<>();
+        if (list != null){
+            for ( Comment comment : list){
+                Map<String, Object> map = new HashMap<>();
+                map.put("comment", comment);
+                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT, comment.getId());
+                map.put("likeCount", likeCount);
+                comments.add(map);
+            }
+        }
+        model.addAttribute("comments", comments);
+        return "/site/my-reply";
     }
 }
