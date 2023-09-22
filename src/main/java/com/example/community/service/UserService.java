@@ -213,8 +213,6 @@ public class UserService implements CommunityConstant {
                 switch (user.getType()) {
                     case 1:
                         return AUTHORITY_ADMIN;
-                    case 2:
-                        return AUTHORITY_MODERATOR;
                     default:
                         return AUTHORITY_USER;
                 }

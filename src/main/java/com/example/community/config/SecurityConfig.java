@@ -44,14 +44,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                         "/unfollow")
                 .hasAnyAuthority(
                         AUTHORITY_USER,
-                        AUTHORITY_ADMIN,
-                        AUTHORITY_MODERATOR)
+                        AUTHORITY_ADMIN)
                 .antMatchers(
                         "/discuss/top",
                         "/discuss/wonderful"
                 )
                 .hasAnyAuthority(
-                        AUTHORITY_MODERATOR,
                         AUTHORITY_ADMIN
                 )
                 .antMatchers("/discuss/delete",

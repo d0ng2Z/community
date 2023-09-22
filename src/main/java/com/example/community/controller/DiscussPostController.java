@@ -174,7 +174,7 @@ public class DiscussPostController implements CommunityConstant {
         discussPostService.updateType(id, type);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("status", discussPost.getStatus());
+        map.put("type", type);
 
         // 触发发帖事件，发送消息
         Event event = new Event()
